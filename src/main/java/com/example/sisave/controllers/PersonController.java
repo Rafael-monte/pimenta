@@ -1,8 +1,8 @@
 package com.example.sisave.controllers;
 
-import com.example.sisave.exceptions.ServerException;
-import com.example.sisave.models.Usuario;
 import com.example.sisave.exceptions.BadRequestBodyException;
+import com.example.sisave.exceptions.ServerException;
+import com.example.sisave.models.dto.UsuarioDto;
 import com.example.sisave.models.exception.SimpleErrorMessageModel;
 import com.example.sisave.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class PersonController {
 
 
     @PostMapping(path="/save", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> savePerson(@RequestBody Usuario person) {
+    public ResponseEntity<?> savePerson(@RequestBody UsuarioDto person) {
         try {
-            service.savePerson(person);
+            service.savePerson(person.unwrap());
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (BadRequestBodyException bde) {
             return ResponseEntity.badRequest().body(
