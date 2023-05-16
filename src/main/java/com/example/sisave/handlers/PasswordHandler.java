@@ -29,7 +29,7 @@ public class PasswordHandler {
     }
 
 
-    public static String decryptSecret(Usuario person) throws Exception {
+    public static String decryptSecret(Usuario person) throws ServerException {
         try {
             SecretKeySpec key = new SecretKeySpec(generateKey(person).getBytes(StandardCharsets.UTF_8), "AES");
             byte[] cipherEncryptedPassoword = Base64.getDecoder().decode(person.getSecret().getBytes(StandardCharsets.UTF_8));

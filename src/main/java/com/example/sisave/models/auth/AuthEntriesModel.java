@@ -1,10 +1,13 @@
 package com.example.sisave.models.auth;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class AuthEntriesModel {
-    private String username;
+    @JsonProperty("email")
+    private String email;
+    @JsonProperty("password")
     private String password;
 }

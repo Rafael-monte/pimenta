@@ -17,11 +17,6 @@ public class PersonController {
     @Autowired
     private UsuarioService service;
 
-    @GetMapping(path="/say-hi/{name}")
-    public ResponseEntity<?> sayHi(@PathVariable(name="name") String name) {
-        return ResponseEntity.ok().body(String.format("Hi %s", name));
-    }
-
 
     @PostMapping(path="/save", consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> savePerson(@RequestBody UsuarioDto person) {

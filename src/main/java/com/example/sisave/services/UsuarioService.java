@@ -2,6 +2,7 @@ package com.example.sisave.services;
 
 import com.example.sisave.exceptions.BadRequestBodyException;
 import com.example.sisave.exceptions.ServerException;
+import com.example.sisave.exceptions.UserNotFoundException;
 import com.example.sisave.handlers.PasswordHandler;
 import com.example.sisave.models.Usuario;
 import com.example.sisave.repositories.UsuarioRepository;
@@ -16,6 +17,9 @@ import java.util.Optional;
 public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private AuthService authService;
 
     @Transactional
     public void savePerson(Usuario person) throws BadRequestBodyException, ServerException {
