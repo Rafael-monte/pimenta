@@ -1,5 +1,7 @@
 package com.example.sisave.controllers;
 
+import com.example.sisave.exceptions.BadRequestBodyException;
+import com.example.sisave.exceptions.ServerException;
 import com.example.sisave.models.auth.AuthEntriesModel;
 import com.example.sisave.models.auth.AuthResponseModel;
 import com.example.sisave.models.exception.SimpleErrorMessageModel;
@@ -18,16 +20,20 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping(path="/token", consumes= MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/login", consumes= MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getToken(@ModelAttribute AuthEntriesModel entries) {
         try {
             String token = authService.generateToken(entries);
             return ResponseEntity.ok().body(new AuthResponseModel(token));
-        } catch(NoSuchAlgorithmException nsae) {
+        } catch(BadRequestBodyException brbe) {
             return ResponseEntity.badRequest().body(new SimpleErrorMessageModel(
                     "An error occoured when try to generate the token. Try again later.",
-                    null
+                    brbe.getMessage()
             ));
+        } catch(ServerException se) {
+            return ResponseEntity.internalServerError().body(
+                    new SimpleErrorMessageModel("An internal error occoured, try again later.", se.getMessage())
+            );
         }
     }
 
