@@ -37,6 +37,11 @@ public class AuthService {
         return encrypt(input);
     }
 
+    public String generateNewTokenAfterUpdatePerson(Usuario person) throws ServerException, BadRequestBodyException {
+        String input = String.format("%s:%s", person.getEmail(), person.getSecret());
+        return encrypt(input);
+    }
+
 
     private void checkIfUserExists(AuthEntriesModel entriesModel) throws BadRequestBodyException {
         Optional<Usuario> optUser = userRepository.getUsuarioByEmail(entriesModel.getEmail());
@@ -75,6 +80,13 @@ public class AuthService {
             throw new UserNotFoundException("Cannot find user by using its token");
         }
         return optUser.get();
+    }
+
+
+    public void addSensibleInformationToUser(Usuario person, String token) {
+        Usuario currentUser = this.getUserFromAuth(token);
+        person.setSecret(currentUser.getSecret());
+        person.setUserId(currentUser.getUserId());
     }
 
 
