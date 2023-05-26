@@ -15,7 +15,7 @@ public class CursoModel {
     @Column(name="nome")
     private String nome;
 
-    @ManyToOne
+    @jakarta.persistence.ManyToOne
     @JoinColumn(name="user_id")
     private Usuario usuario;
 

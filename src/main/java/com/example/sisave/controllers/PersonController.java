@@ -71,6 +71,11 @@ public class PersonController {
                             be.getMessage()
                     )
             );
+        } catch (ServerException se) {
+            return ResponseEntity.internalServerError().body(
+                    new SimpleErrorMessageModel("Occoured an internal exception. Try again later.",
+                            "Cant deserialize request token")
+            );
         }
     }
 
