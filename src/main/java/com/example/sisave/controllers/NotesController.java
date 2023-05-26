@@ -24,18 +24,13 @@ public class NotesController {
         try {
             Usuario person = this.service.getAuth().getUserFromAuth(token);
             return ResponseEntity.ok().body(this.service.getNotesFromOldSystem(person, noteIndex));
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (IndexOutOfBoundsException | EntriesNotConfiguredException e) {
             return ResponseEntity.badRequest().body(
                     new SimpleErrorMessageModel(
                             Constants.DEFAULT_BAD_REQUEST_MESSAGE,
-                            String.format("Bad index: [%s]", noteIndex.toString())
+                            e.getMessage()
                     )
             );
-        } catch (EntriesNotConfiguredException ence) {
-            return ResponseEntity.badRequest().body(new SimpleErrorMessageModel(
-                    Constants.DEFAULT_BAD_REQUEST_MESSAGE,
-                    ence.getMessage()
-            ));
         } catch(ServerException se) {
             return ResponseEntity.internalServerError().body(
                     new SimpleErrorMessageModel("Occoured an internal exception. Try again later.",

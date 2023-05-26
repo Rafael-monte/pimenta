@@ -34,7 +34,9 @@ public class NotesService {
         try {
             selectedEntry = entries.get(noteIndex);
         } catch(IndexOutOfBoundsException ioobe) {
-            throw new BadRequestBodyException();
+            throw new BadRequestBodyException(
+                    String.format("Bad index: [%d]", noteIndex)
+            );
         }
 
         return this.middlewareService.getNotes(selectedEntry);
