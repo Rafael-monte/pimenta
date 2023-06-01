@@ -25,20 +25,41 @@ public class MiddlewareControllerTest {
     private Integer selectedIndex;
 
     private String token;
+    private Boolean isMiddlewareCurrenctlyDown = Boolean.FALSE;
+
     @BeforeEach
     public void setUp() {
         this.selectedIndex = 0;
-        this.token = "";
+        this.token = "qhHHrdaDaXhSyd8AXUCCze9qI6wsEJW5LXivNRMJbEc=";
+        this.isMiddlewareCurrenctlyDown = Boolean.TRUE;
     }
 
     @Test
     @Transactional
     @Rollback
-    public void whenCallMiddleware_GetsOK() throws Exception {
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.get(CONTROLLER_URL+this.selectedIndex)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("u-token", this.token)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+    public void whenCallMiddlewareCorrectly_GetsOK() throws Exception {
+        if (!this.isMiddlewareCurrenctlyDown) {
+            this.mockMvc.perform(
+                    MockMvcRequestBuilders.get(CONTROLLER_URL + this.selectedIndex)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("u-token", this.token)
+            ).andExpect(MockMvcResultMatchers.status().isOk());
+        }
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void whenCallMiddlewareWhenItsDown_GetsBadGateway() throws Exception {
+        if (this.isMiddlewareCurrenctlyDown) {
+            this.mockMvc.perform(
+                    MockMvcRequestBuilders.get(CONTROLLER_URL + this.selectedIndex)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("u-token", this.token)
+            ).andExpect(MockMvcResultMatchers.status().isBadGateway());
+        }
+    }
+
+
+
 }

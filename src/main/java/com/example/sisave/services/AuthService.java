@@ -62,9 +62,13 @@ public class AuthService {
 
 
     private String decrypt(String input) throws ServerException {
-        byte[] withoutBase64 = Base64.getDecoder().decode(input);
-        byte[] decrypted = this.applyCipher(Cipher.DECRYPT_MODE, withoutBase64);
-        return new String(decrypted, StandardCharsets.UTF_8);
+        try {
+            byte[] withoutBase64 = Base64.getDecoder().decode(input);
+            byte[] decrypted = this.applyCipher(Cipher.DECRYPT_MODE, withoutBase64);
+            return new String(decrypted, StandardCharsets.UTF_8);
+        } catch(Exception e) {
+            throw new ServerException("Occoured an error while try to decode token");
+        }
     }
 
     public Usuario getUserFromAuth(String tokenHeader) throws ServerException {

@@ -6,11 +6,11 @@ import com.example.sisave.models.SisavEntryModel;
 import com.example.sisave.models.Usuario;
 import com.example.sisave.models.dto.NotesDto;
 import com.example.sisave.repositories.SisavEntryRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class NotesService {
@@ -24,7 +24,7 @@ public class NotesService {
     @Autowired
     private SisavEntryRepository entryRepository;
 
-    public List<NotesDto> getNotesFromOldSystem(Usuario person, Integer noteIndex) throws EntriesNotConfiguredException {
+    public List<NotesDto> getNotes(Usuario person, Integer noteIndex) throws EntriesNotConfiguredException, JsonProcessingException {
         List<SisavEntryModel> entries = this.entryRepository.findByUsuarioUserId(person.getUserId());
         if (entries.isEmpty()) {
             throw new EntriesNotConfiguredException("There are no entries configured");
@@ -39,7 +39,7 @@ public class NotesService {
             );
         }
 
-        return this.middlewareService.getNotes(selectedEntry);
+        return this.middlewareService.getNotesFromMiddleware(selectedEntry);
     }
 
 
