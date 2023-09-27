@@ -2,12 +2,13 @@ package com.example.sisave.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+
+import java.time.LocalDate;
+
 @Data
 @Entity
 @Table(name="usuario")
-public class Usuario {
-    @jakarta.persistence.Id
+public class UsuarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
@@ -18,6 +19,9 @@ public class Usuario {
 
     @Column(name="email", length = 120, unique = true)
     private String email;
+
+    @Column(name="birth_date")
+    private LocalDate birthDate;
 
     @Column(name="secret")
     private String secret;

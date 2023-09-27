@@ -2,7 +2,7 @@ package com.example.sisave.services;
 import com.example.sisave.exceptions.BadRequestBodyException;
 import com.example.sisave.exceptions.ServerException;
 import com.example.sisave.handlers.PasswordHandler;
-import com.example.sisave.models.Usuario;
+import com.example.sisave.models.UsuarioModel;
 import com.example.sisave.models.auth.AuthEntriesModel;
 import com.example.sisave.exceptions.UserNotFoundException;
 import com.example.sisave.repositories.UsuarioRepository;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -37,14 +36,14 @@ public class AuthService {
         return encrypt(input);
     }
 
-    public String generateNewTokenAfterUpdatePerson(Usuario person) throws ServerException, BadRequestBodyException {
+    public String generateNewTokenAfterUpdatePerson(UsuarioModel person) throws ServerException, BadRequestBodyException {
         String input = String.format("%s:%s", person.getEmail(), person.getSecret());
         return encrypt(input);
     }
 
 
     private void checkIfUserExists(AuthEntriesModel entriesModel) throws BadRequestBodyException {
-        Optional<Usuario> optUser = userRepository.getUsuarioByEmail(entriesModel.getEmail());
+        Optional<UsuarioModel> optUser = userRepository.getUsuarioByEmail(entriesModel.getEmail());
         if (optUser.isEmpty()) {
             throw new BadRequestBodyException("Cannot find the user by given credentials");
         }
@@ -71,10 +70,10 @@ public class AuthService {
         }
     }
 
-    public Usuario getUserFromAuth(String tokenHeader) throws ServerException {
+    public UsuarioModel getUserFromAuth(String tokenHeader) throws ServerException {
         String decryptedString = this.decrypt(tokenHeader);
         List<String> credentials = List.of(decryptedString.split(this.SEPARATOR));
-        Optional<Usuario> optUser = userRepository.getUsuarioByEmail(credentials.stream().findFirst()
+        Optional<UsuarioModel> optUser = userRepository.getUsuarioByEmail(credentials.stream().findFirst()
                 .orElseThrow(()-> new ServerException("Cannot deserialize token")));
         if (optUser.isEmpty()) {
             throw new UserNotFoundException("Cannot find user by using its token");
@@ -87,8 +86,8 @@ public class AuthService {
     }
 
 
-    public void addSensibleInformationToUser(Usuario person, String token) {
-        Usuario currentUser = this.getUserFromAuth(token);
+    public void addSensibleInformationToUser(UsuarioModel person, String token) {
+        UsuarioModel currentUser = this.getUserFromAuth(token);
         person.setSecret(currentUser.getSecret());
         person.setUserId(currentUser.getUserId());
     }

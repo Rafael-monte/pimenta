@@ -1,10 +1,8 @@
 package com.example.sisave.handlers;
 
 import com.example.sisave.exceptions.ServerException;
-import com.example.sisave.models.Usuario;
+import com.example.sisave.models.UsuarioModel;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Level;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,7 +14,7 @@ import java.util.List;
 public class PasswordHandler {
     private static final List<Integer> AVAILABLE_BYTE_LENGTHS = Arrays.asList(16, 24, 32);
 
-    public static String encryptSecret(Usuario person) throws ServerException {
+    public static String encryptSecret(UsuarioModel person) throws ServerException {
         try {
             SecretKeySpec key = new SecretKeySpec(generateKey(person).getBytes(StandardCharsets.UTF_8), "AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -29,7 +27,7 @@ public class PasswordHandler {
     }
 
 
-    public static String decryptSecret(Usuario person) throws ServerException {
+    public static String decryptSecret(UsuarioModel person) throws ServerException {
         try {
             SecretKeySpec key = new SecretKeySpec(generateKey(person).getBytes(StandardCharsets.UTF_8), "AES");
             byte[] cipherEncryptedPassoword = Base64.getDecoder().decode(person.getSecret().getBytes(StandardCharsets.UTF_8));
@@ -42,7 +40,7 @@ public class PasswordHandler {
     }
 
 
-    private static String generateKey(Usuario person) {
+    private static String generateKey(UsuarioModel person) {
         String idAsString = person.getUserId().toString();
         String key = "";
         for (final Integer BYTE_LENGTH: AVAILABLE_BYTE_LENGTHS) {

@@ -1,6 +1,6 @@
 package com.example.sisave;
 
-import com.example.sisave.models.Usuario;
+import com.example.sisave.models.UsuarioModel;
 import com.example.sisave.models.dto.UsuarioDto;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +23,11 @@ public class PersonControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private Usuario personInput;
+    private UsuarioModel personInput;
 
-    private static final String SAVE_ENDPOINT="/person/save";
+    private static final String SAVE_ENDPOINT="/api/person/save";
 
-    private static final String UPDATE_PASSWORD_ENDPOINT="/person/update-secret";
+    private static final String UPDATE_PASSWORD_ENDPOINT="/api/person/update-secret";
 
     private static final String EMPTY_STRING="";
     private ObjectMapper mapper;
@@ -36,7 +36,7 @@ public class PersonControllerTest {
 
     @BeforeEach
     public void setUp() {
-        this.personInput = new Usuario();
+        this.personInput = new UsuarioModel();
         this.personInput.setUsername("Rafao");
         this.personInput.setEmail("rafaelmonte47@gg.com");
         this.personInput.setSecret("123456");

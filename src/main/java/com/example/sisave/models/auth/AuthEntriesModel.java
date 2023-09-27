@@ -8,6 +8,6 @@ import lombok.Data;
 public class AuthEntriesModel {
     @JsonProperty("email")
     private String email;
-    @JsonProperty("password")
+    @JsonProperty("secret")
     private String password;
 }

@@ -4,8 +4,9 @@ import com.example.sisave.exceptions.BadRequestBodyException;
 import com.example.sisave.exceptions.ServerException;
 import com.example.sisave.exceptions.UserNotFoundException;
 import com.example.sisave.handlers.PasswordHandler;
-import com.example.sisave.models.Usuario;
+import com.example.sisave.models.UsuarioModel;
 import com.example.sisave.models.auth.AuthResponseModel;
+import com.example.sisave.models.dto.UsuarioDto;
 import com.example.sisave.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,20 +24,21 @@ public class UsuarioService {
     private AuthService authService;
 
     @Transactional
-    public void savePerson(Usuario person) throws BadRequestBodyException, ServerException {
+    public void savePerson(UsuarioModel person) throws BadRequestBodyException, ServerException {
         this.verifyBlankFields(person);
-        Optional<Usuario> optUsuario = repository.getUsuarioByEmail(person.getEmail());
+        Optional<UsuarioModel> optUsuario = repository.getUsuarioByEmail(person.getEmail());
         if (optUsuario.isPresent()) {
             throw new BadRequestBodyException(String.format("The email '%s' is already in use.", person.getEmail()));
         }
+        repository.saveAndFlush(person);
         person.setSecret(PasswordHandler.encryptSecret(person));
         repository.saveAndFlush(person);
     }
 
     @Transactional
-    public void updatePersonById(Usuario person, Long id) throws BadRequestBodyException {
+    public void updatePersonById(UsuarioModel person, Long id) throws BadRequestBodyException {
         this.verifyBlankFields(person);
-        Optional<Usuario> optUsuario = repository.getUsuarioByUserId(id);
+        Optional<UsuarioModel> optUsuario = repository.getUsuarioByUserId(id);
         if (optUsuario.isEmpty()) {
             throw new BadRequestBodyException(String.format("The email '%s' wasn't found.", person.getEmail()));
         }
@@ -45,7 +47,7 @@ public class UsuarioService {
 
 
     @Transactional
-    public AuthResponseModel updateSecret(String newSecret, String oldSecret, Usuario person) throws BadRequestBodyException {
+    public AuthResponseModel updateSecret(String newSecret, String oldSecret, UsuarioModel person) throws BadRequestBodyException {
         this.verifySecrets(newSecret, oldSecret);
         String decryptedSecret = PasswordHandler.decryptSecret(person);
 
@@ -58,7 +60,7 @@ public class UsuarioService {
         return new AuthResponseModel(authService.generateNewTokenAfterUpdatePerson(person));
     }
 
-    private void verifyBlankFields(Usuario person) throws BadRequestBodyException{
+    private void verifyBlankFields(UsuarioModel person) throws BadRequestBodyException{
         if (!StringUtils.hasText(person.getUsername())) {
             throw new BadRequestBodyException(String.format("The username cannot be empty"));
         }
@@ -69,6 +71,9 @@ public class UsuarioService {
 
         if (!StringUtils.hasText(person.getSecret())) {
             throw new BadRequestBodyException("The password cannot be empty");
+        }
+        if (!StringUtils.hasText(person.getBirthDate().toString())) {
+            throw new BadRequestBodyException("The birth date cannot be empty");
         }
     }
 

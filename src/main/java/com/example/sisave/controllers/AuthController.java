@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping(path="/auth")
+@RequestMapping(path="/api/auth")
 public class AuthController {
 
     @Autowired
     private AuthService authService;
 
-    @PostMapping(path="/login", consumes= MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getToken(@ModelAttribute AuthEntriesModel entries) {
+    @PostMapping(path="/login", consumes= MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin("*")
+    public ResponseEntity<?> getToken(@RequestBody AuthEntriesModel entries) {
         try {
             String token = authService.generateToken(entries);
             return ResponseEntity.ok().body(new AuthResponseModel(token));
